@@ -1,0 +1,22 @@
+Travel Media Manager / 旅行素材管家
+Copyright (C) 2026 waton1990 and contributors
+
+SPDX-License-Identifier: GPL-3.0-or-later
+
+Unless a file states otherwise, the original code, documentation and original
+artwork in this repository are licensed under the GNU General Public License,
+version 3 or (at your option) any later version. See LICENSE for the full text.
+
+This program is distributed in the hope that it will be useful, but WITHOUT
+ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE. See the GNU General Public License for details.
+
+Third-party components retain their own copyright notices and licenses.
+The notices in third-party/notices are reproduced from their distributions;
+this project does not relicense those components. See THIRD_PARTY_NOTICES.md
+and docs/DEPENDENCIES.md for the inventory and source-distribution procedure.
+
+This software is based in part on the work of the Independent JPEG Group.
+This software uses the FreeType Project (https://www.freetype.org/).
+Its applicable license and copyright notices are reproduced in
+third-party/notices/pillow/LICENSE.

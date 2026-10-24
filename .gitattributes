@@ -1,0 +1,15 @@
+* text=auto
+*.swift text eol=lf
+*.py text eol=lf
+*.sh text eol=lf
+*.md text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+*.json text eol=lf
+*.plist text eol=lf
+*.svg text eol=lf
+*.icns binary
+*.png binary
+*.gif binary
+# Preserve upstream notices byte-for-byte, including original line endings.
+third-party/** -text -whitespace

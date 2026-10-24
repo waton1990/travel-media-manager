@@ -1,0 +1,2 @@
+# The helper verifies this exact transport version before opening USB services.
+pymobiledevice3==11.32.0

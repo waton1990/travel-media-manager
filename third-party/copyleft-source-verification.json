@@ -1,0 +1,40 @@
+{
+  "scope": "Installed Python source files compared with the SHA-256-verified upstream sdist; this is separate from compiled app verification.",
+  "packages": [
+    {
+      "name": "pymobiledevice3",
+      "version": "11.32.0",
+      "sourceFilesCompared": 241,
+      "notInSdist": [],
+      "mismatches": []
+    },
+    {
+      "name": "ioregistry",
+      "version": "0.0.6",
+      "sourceFilesCompared": 8,
+      "notInSdist": [],
+      "mismatches": []
+    },
+    {
+      "name": "pygnuutils",
+      "version": "0.1.1",
+      "sourceFilesCompared": 14,
+      "notInSdist": [],
+      "mismatches": []
+    },
+    {
+      "name": "certifi",
+      "version": "2026.7.22",
+      "sourceFilesCompared": 6,
+      "notInSdist": [],
+      "mismatches": []
+    },
+    {
+      "name": "tqdm",
+      "version": "4.70.1",
+      "sourceFilesCompared": 31,
+      "notInSdist": [],
+      "mismatches": []
+    }
+  ]
+}

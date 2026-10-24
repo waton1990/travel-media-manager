@@ -1,0 +1,55 @@
+# Local build and test output; never publish device indexes or private media.
+.build/
+.swiftpm/
+work/
+outputs/
+dist/
+private/
+.DS_Store
+__pycache__/
+*.py[cod]
+*.log
+.venv/
+venv/
+
+# Credentials, signing identities, and local configuration.
+.env
+.env.*
+!.env.example
+*.p12
+*.p8
+*.key
+*.pem
+*.mobileprovision
+*.provisionprofile
+.netrc
+
+# Runtime databases and original media are not test fixtures.
+*.sqlite
+*.sqlite-*
+*.db
+*.db-*
+*.HEIC
+*.heic
+*.MOV
+*.mov
+*.MP4
+*.mp4
+*.LRF
+*.lrf
+*.AAE
+*.aae
+
+# Release files belong in GitHub Releases, not source history.
+*.app/
+*.dmg
+*.pkg
+*.zip
+*.tar.gz
+*.tgz
+
+# Local IDE state.
+.idea/
+.vscode/
+*.xcuserstate
+xcuserdata/

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleExecutable</key>
+	<string>TravelMediaManager</string>
+	<key>CFBundleIdentifier</key>
+	<string>io.github.waton1990.travel-media-manager</string>
+	<key>CFBundleName</key>
+	<string>旅行素材管家</string>
+	<key>CFBundleDisplayName</key>
+	<string>旅行素材管家</string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleShortVersionString</key>
+	<string>0.3.0</string>
+	<key>CFBundleVersion</key>
+	<string>9</string>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>zh_CN</string>
+	<key>CFBundleLocalizations</key>
+	<array>
+		<string>zh-Hans</string>
+	</array>
+	<key>CFBundleIconFile</key>
+	<string>AppIcon</string>
+	<key>LSMinimumSystemVersion</key>
+	<string>13.0</string>
+	<key>NSHighResolutionCapable</key>
+	<true/>
+	<key>NSPrincipalClass</key>
+	<string>NSApplication</string>
+	<key>NSRemovableVolumesUsageDescription</key>
+	<string>读取您选择的相机或 iPhone 素材，并复制到您选择的归档位置。设备源文件保持原样。</string>
+	<key>NSCameraUsageDescription</key>
+	<string>访问您选择的已连接 iPhone 的照片和视频，按旅行日期复制归档；不会拍照或删除原件。</string>
+	<key>NSNetworkVolumesUsageDescription</key>
+	<string>访问您选择的素材或保存文件夹。</string>
+	<key>NSHumanReadableCopyright</key>
+	<string>Copyright © 2026 Travel Media Manager contributors. GPL-3.0-or-later.</string>
+</dict>
+</plist>

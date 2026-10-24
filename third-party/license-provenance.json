@@ -1,0 +1,14 @@
+{
+  "projectLicense": {
+    "spdx": "GPL-3.0-or-later",
+    "textVersion": "GPL v3",
+    "canonicalTextURL": "https://www.gnu.org/licenses/gpl-3.0.txt",
+    "textSource": "pymobiledevice3 11.32.0 unmodified GPL v3 license, independently available in the verified source archive",
+    "sha256": "8ceb4b9ee5adedde47b31e975c1d90c73ad27b6b165a1dcd80c7c545eb65b903"
+  },
+  "noticeInventory": {
+    "source": "The exact Python environment used for the USB helper build, supplemented with license notices extracted from verified exact-version PyPI source distributions.",
+    "packageCount": 101,
+    "scope": "Build environment inventory, not a claim that every distribution is loaded at runtime."
+  }
+}

@@ -1,0 +1,49 @@
+name: Offline checks
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: offline-checks-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  checks:
+    name: macOS synthetic tests
+    runs-on: macos-15
+    timeout-minutes: 20
+    env:
+      DEVELOPER_DIR: /Applications/Xcode_16.4.app/Contents/Developer
+    steps:
+      - name: Check out source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Set up Python
+        uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: '3.12'
+      - name: Check public repository contents
+        run: python3 scripts/check-public-release.py --tracked
+      - name: Show toolchain
+        run: |
+          xcodebuild -version
+          xcrun swift --version
+          python3 --version
+      - name: Swift core tests
+        run: bash scripts/test.sh
+      - name: USB helper tests without device access
+        run: python3 -m unittest discover -s Tests/USBHelperTests -v
+      - name: App model checks
+        run: bash scripts/test-app-model.sh
+      - name: City resolution checks without network access
+        run: bash scripts/test-place-resolution.sh
+
+# These tests generate synthetic data. This workflow does not scan devices,
+# download original media, call the geocoder, build installers, or publish files.

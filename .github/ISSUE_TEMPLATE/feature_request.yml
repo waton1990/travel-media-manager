@@ -1,0 +1,24 @@
+name: 功能建议 / Feature request
+description: 描述需要解决的旅行素材整理问题。
+title: '[Feature] '
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: 你遇到什么问题？
+      description: 描述实际操作场景，勿包含私人素材或行程细节。
+    validations:
+      required: true
+  - type: textarea
+    id: outcome
+    attributes:
+      label: 希望得到什么结果？
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: 当前怎样处理这个问题？
+  - type: markdown
+    attributes:
+      value: 建议会先讨论需求和数据安全边界，不代表已承诺实现或交付日期。

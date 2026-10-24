@@ -1,0 +1,59 @@
+name: 问题反馈 / Bug report
+description: 报告扫描、选择、复制或校验问题。
+title: '[Bug] '
+body:
+  - type: markdown
+    attributes:
+      value: |
+        请只提供排查问题所需的信息。不要上传私人照片、视频、照片索引数据库、设备 UDID、配对记录、密钥或完整原始日志。
+        截图和错误信息请先遮盖姓名、路径、文件名及精确位置。安全漏洞请参阅 SECURITY.md。
+  - type: input
+    id: version
+    attributes:
+      label: 应用版本
+      placeholder: 例如 0.3.0 build 8，或 Git commit
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: 系统与设备型号
+      description: 仅填写 macOS / iOS 版本和设备型号；无需序列号或 UDID。
+      placeholder: 例如 Apple Silicon Mac、macOS 版本、iPhone 型号、iOS 版本
+    validations:
+      required: true
+  - type: dropdown
+    id: source
+    attributes:
+      label: 素材来源
+      options:
+        - iPhone（数据线）
+        - 文件夹
+        - 启动或构建
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: 复现步骤
+      description: 请使用虚构旅行名称、日期和文件名说明，避免公开个人行程。
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: 预期结果与实际结果
+    validations:
+      required: true
+  - type: textarea
+    id: error
+    attributes:
+      label: 已去除私人信息的错误摘要
+      description: 只提供相关几行，不粘贴完整日志或手机数据库。
+  - type: checkboxes
+    id: privacy
+    attributes:
+      label: 隐私检查
+      options:
+        - label: 我已去除私人素材、完整路径、精确位置、设备标识和凭据。
+          required: true
