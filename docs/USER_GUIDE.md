@@ -6,7 +6,7 @@
 
 查看 [Releases](https://github.com/waton1990/travel-media-manager/releases)，确认是否提供与你的 Mac 匹配的应用附件，并阅读该版本的安装说明和校验值。自动生成的 Source code 压缩包是源码，不能直接作为应用打开；从源码构建见 [README](../README.md#从源码构建)。
 
-当前已有构建为 Apple Silicon 版本，只有本地临时签名，尚未完成 Apple 公证。测试包下载、安装和首次打开的系统提示处理见[安装说明](INSTALL.md)。请按提示类型区分处理，不关闭系统安全功能；也可以等待完成正式签名的版本再使用。
+当前 0.3.1（build 10）发行包面向 Apple Silicon，已完成 Developer ID 签名与 Apple 公证。下载、安装和首次打开的系统提示见[安装说明](INSTALL.md)。默认源码构建仍使用临时签名。
 
 实际归档前，确认目标磁盘已连接、有足够空间，并先用少量非敏感素材熟悉流程。
 

@@ -14,11 +14,11 @@
 
 ## 当前版本与获取方式
 
-**0.3.0（build 9）社区预览。** 归档核心延续 build 8，公开版本更新应用标识和发布资料。既有本地回归及有限真机检查不代表所有机型、图库或系统版本都已验证。
+**0.3.1（build 10）社区预览。** 发行包已使用 Developer ID Application 签名并通过 Apple 公证，附有公证票据。本次更新发布与安装流程，归档功能保持不变。
 
 请查看 [Releases 下载页](https://github.com/waton1990/travel-media-manager/releases)获取实际发布的文件、版本说明和校验值。只有标明为应用安装包的附件才是可运行软件；GitHub 自动提供的 Source code 压缩包是源码，需要自行构建。没有应用附件时，可按下方说明从源码构建。测试包下载、安装与首次打开步骤见[安装说明](docs/INSTALL.md)。
 
-当前已有应用包面向 **Apple Silicon Mac（M 系列）**，采用本地临时签名，尚未完成 Developer ID 签名或 Apple 公证。源码声明最低 macOS 13，但较早 macOS 与 Intel Mac 尚未完成运行验证。当前应用界面为简体中文，英文文档不代表已有英文界面。
+当前已有应用包面向 **Apple Silicon Mac（M 系列）**，已完成 Developer ID 签名和 Apple 公证。源码声明最低 macOS 13，但较早 macOS 与 Intel Mac 尚未完成运行验证。当前应用界面为简体中文，英文文档不代表已有英文界面。
 
 ## 可以做什么
 
@@ -61,7 +61,7 @@ iPhone 扫描会把照片索引快照读到 Mac 的临时目录，再在本机�
 
 ## 从源码构建
 
-需要 Apple Silicon Mac、macOS 开发工具链，以及可创建 Python 3.12 环境的 [uv](https://docs.astral.sh/uv/getting-started/installation/)。核心测试使用 Swift Testing，需要提供该框架的 Xcode 或 Command Line Tools。项目的 Swift tools 声明不等于测试工具链的最低版本保证。
+需要 Apple Silicon Mac、macOS 开发工具链，以及可创建 Python 3.12.14 环境的 [uv](https://docs.astral.sh/uv/getting-started/installation/)。核心测试使用 Swift Testing，需要提供该框架的 Xcode 或 Command Line Tools。项目的 Swift tools 声明不等于测试工具链的最低版本保证。
 
 在仓库根目录运行：
 
@@ -69,7 +69,7 @@ iPhone 扫描会把照片索引快照读到 Mac 的临时目录，再在本机�
 bash scripts/build-app.sh
 ```
 
-构建结果为 `outputs/旅行素材管家.app`。脚本将按锁定版本安装 USB 依赖并打包运行库，首次构建需要联网。完成后的应用无需使用者另外安装 Python 或 uv。
+构建结果为 `outputs/旅行素材管家.app`。脚本固定 Python 3.12.14，按锁定版本安装 USB 依赖并打包运行库，首次构建需要联网。默认源码构建使用本地临时签名；Developer ID 签名与公证流程见[发布说明](docs/RELEASING.md)。完成后的应用无需使用者另外安装 Python 或 uv。
 
 仅编译 Swift 应用目标：
 
@@ -90,7 +90,7 @@ bash scripts/test-app-model.sh
 bash scripts/test-place-resolution.sh
 ```
 
-build 9 公开源码已在本地重新通过 95 项核心测试、127 项 USB 组件测试、53 项 AppModel 检查和 25 项城市整理检查。测试包构建、启动及 USB 离线自检通过。上述检查不访问真实设备；结果不等于所有系统版本的兼容承诺。GitHub 自动测试的运行状态以 Actions 页面为准。
+build 10 公开源码已在本地重新通过 95 项核心测试、127 项 USB 组件测试、53 项 AppModel 检查和 25 项城市整理检查。测试包构建、启动及 USB 离线自检通过。本次签名发行没有重新扫描或导入真实手机素材；既有有限真机检查及这些本地检查，不等于所有设备或系统版本的兼容承诺。GitHub 自动测试的运行状态以 Actions 页面为准。
 
 ## 反馈、贡献与后续计划
 

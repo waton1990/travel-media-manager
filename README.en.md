@@ -14,11 +14,11 @@ A native macOS app that copies travel photos and videos from an iPhone over USB,
 
 ## Status and downloads
 
-**0.3.0, build 9 — community preview.** The archive core continues from build 8; public packaging updates the application identifier and release materials. Existing local regression and limited real-device checks do not establish compatibility across devices, libraries or OS versions.
+**0.3.1, build 10 — community preview.** The release app is Developer ID signed and Apple notarized, with a stapled notarization ticket. This update improves distribution and installation; archive behavior is unchanged.
 
 Check [Releases](https://github.com/waton1990/travel-media-manager/releases) for available artifacts and checksums. GitHub’s automatic Source code archives require a local build. An installable app is available only when explicitly attached to a release. See the [installation guide](docs/INSTALL.md) for the test package and macOS first-launch prompts.
 
-The existing app targets **Apple Silicon Macs** and is locally ad-hoc signed, not Developer ID signed or Apple notarized. The package declares macOS 13 as its minimum; earlier macOS versions and Intel Macs have not been runtime-validated. The app UI is currently in Simplified Chinese.
+The existing app targets **Apple Silicon Macs** and is Developer ID signed and Apple notarized. The package declares macOS 13 as its minimum; earlier macOS versions and Intel Macs have not been runtime-validated. The app UI is currently in Simplified Chinese.
 
 ## Features
 
@@ -42,13 +42,17 @@ There is no resume, append-to-existing-trip, automatic deduplication or rename-o
 
 ## Build and test
 
-Use macOS development tools and [uv](https://docs.astral.sh/uv/getting-started/installation/) with Python 3.12 support. Swift tests require a toolchain that includes Swift Testing.
+Use macOS development tools and [uv](https://docs.astral.sh/uv/getting-started/installation/) with Python 3.12.14 support. Swift tests require a toolchain that includes Swift Testing.
 
 ```sh
 bash scripts/build-app.sh
 ```
 
-The output is `outputs/旅行素材管家.app`. Building the bundled USB runtime may download locked dependencies; app users do not need a separate Python or uv installation. `swift build --product TravelMediaManager` builds only the Swift executable, without the USB runtime.
+The output is `outputs/旅行素材管家.app`. The build pins Python 3.12.14 and may download locked dependencies; app users do not need a separate Python or uv installation. `swift build --product TravelMediaManager` builds only the Swift executable, without the USB runtime.
+
+Local source builds use ad-hoc signing by default. See [the release workflow](docs/RELEASING.md) for Developer ID signing and notarization.
+
+Build 10 passed 300 local checks, app startup and the signed USB helper offline self-check. No real-device scan or import was repeated for this signing release; prior limited device checks do not establish compatibility across devices, libraries or OS versions.
 
 Synthetic checks do not require a phone:
 

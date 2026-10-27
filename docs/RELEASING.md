@@ -65,6 +65,7 @@ xcrun notarytool submit work/notarization/submission.zip \
 xcrun stapler staple "outputs/旅行素材管家.app"
 xcrun stapler validate "outputs/旅行素材管家.app"
 codesign --verify --deep --strict "outputs/旅行素材管家.app"
+python3 scripts/verify-app-signature.py "outputs/旅行素材管家.app" --developer-id
 spctl --assess --type execute --verbose=2 "outputs/旅行素材管家.app"
 ```
 
@@ -72,7 +73,7 @@ spctl --assess --type execute --verbose=2 "outputs/旅行素材管家.app"
 
 ## 3. 冻结新标签与附件
 
-以下 `0.3.1` / build `10` 只是下一次发布的示例，必须与最终 `Info.plist` 一致。确认工作区干净、构建对应当前提交且该提交 CI 已通过，再创建新标签。**旧版本标签和已发布附件不重写；修正已发布版本时使用新版本及新标签。**
+以下以 `0.3.1` / build `10` 为例，执行时使用目标版本，并与最终 `Info.plist` 一致。确认工作区干净、构建对应当前提交且该提交 CI 已通过，再创建新标签。**旧版本标签和已发布附件不重写；修正已发布版本时使用新版本及新标签。**
 
 ```sh
 release_version=0.3.1
@@ -91,7 +92,7 @@ cp work/dependency-sources/python-dependency-sources.tar.gz* work/release/
 
 上例适用于在 Apple Silicon 上验证的 arm64 包；文件名不能代替架构验证。`work/release/` 应为本次新建的附件目录，不混入旧包。
 
-再将已核对的 `cryptography-rust-sources.tar.gz` 及其 `.sha256` 放入该目录。创建 `BUILD_INFO.json`，记录版本、build、`git rev-parse "$release_tag^{commit}"` 得到的完整提交、实际工具链与架构、签名状态、测试范围，以及应用和源码附件的名称、大小与 SHA-256。另写 `work/release/release-notes.md`，说明变更、已知限制、安装入口及哪些检查尚未完成。
+再将已核对的 `cryptography-rust-sources.tar.gz` 及其 `.sha256` 放入该目录。创建 `BUILD_INFO.json`，记录版本、build、`git rev-parse "$release_tag^{commit}"` 得到的完整提交、实际工具链与架构、签名状态、公证提交 ID 和 Accepted 状态、票据验证与 Gatekeeper 评估结果、测试范围，以及应用和源码附件的名称、大小与 SHA-256。另写 `work/release/release-notes.md`，说明变更、已知限制、安装入口及哪些检查尚未完成。
 
 在附件定稿后生成总校验清单；当前附件约定共 8 项：应用 ZIP、本项目源码、两份依赖源码、两份依赖摘要、构建信息和总校验清单。
 
