@@ -17,6 +17,8 @@ venv/
 .env.*
 !.env.example
 *.p12
+*.cer
+*.certSigningRequest
 *.p8
 *.key
 *.pem

@@ -36,7 +36,39 @@ python3 scripts/prepare-source-bundle.py --output work/dependency-sources
 - `prepare-source-bundle.py` 仅生成 Python 源码合集及其 `.sha256`，**不生成 Rust 源码合集**。`cryptography-rust-sources.tar.gz` 必须对应实际 cryptography 版本的 sdist 中的 `Cargo.lock`，按其中校验值准备 crate 源码，同时核对 `third-party/cryptography-rust-source-manifest.json` 和相关通知。只有依赖及对应源码未变且摘要核对通过时，才复用旧合集；更新版本后重新准备。
 - 记录实际 Python、Swift、macOS、依赖及架构信息；不要沿用上次的测试结论。通知或源码需要修正时，先提交修正并重新构建、验证，再定标签。
 
-当前脚本使用 ad-hoc 签名，**没有 Developer ID 签名或 Apple 公证**。发布说明应保持这一事实；签名验证通过不等于通过公证。安装指引沿用 [INSTALL.md](INSTALL.md)，不要要求用户关闭系统安全保护。仅声明实际验证过的芯片、系统和设备范围。
+### Developer ID 签名与 Apple 公证
+
+不指定 `TRAVEL_SIGNING_IDENTITY` 时，脚本仍生成 ad-hoc 签名的本地开发包。对外发布的签名包使用登录钥匙串中的 **Developer ID Application** 身份；私钥、CSR、证书和公证凭据都不放入仓库或发行附件。构建会固定 CPython 3.12.14，并校验主程序及每个内嵌 Mach-O 的签名；全部完成后才替换输出，旧应用留在 `outputs/` 的备份目录。
+
+```sh
+security find-identity -v -p codesigning
+TRAVEL_SIGNING_IDENTITY="你的 Developer ID 身份 SHA-1" bash scripts/build-app.sh
+```
+
+身份可用不等于已经完成公证。首次公证前，在 Apple 账户网站本人创建 App 专用密码，然后通过 `notarytool store-credentials` 的交互提示保存到本机钥匙串。密码不写入命令、源码、日志或聊天；不要使用 `--sync`。以下命令中的邮箱、Team ID 和钥匙串路径由发布者替换：
+
+```sh
+xcrun notarytool store-credentials travel-media-manager-notary \
+  --apple-id "开发者 Apple 账户邮箱" --team-id "开发者 Team ID" \
+  --keychain "$HOME/Library/Keychains/login.keychain-db"
+mkdir -p work/notarization
+ditto -c -k --sequesterRsrc --keepParent "outputs/旅行素材管家.app" \
+  work/notarization/submission.zip
+xcrun notarytool submit work/notarization/submission.zip \
+  --keychain-profile travel-media-manager-notary \
+  --keychain "$HOME/Library/Keychains/login.keychain-db" --no-wait
+```
+
+先确认工具报告 `Successfully uploaded file` 并正常退出，再等待公证结果。`history` / `info` 中出现 `In Progress` 可能只是已创建提交记录，不能单独证明上传完成。默认输出可显示上传进度；`--output-format json` 会抑制进度，直到上传操作结束才输出，静默本身不等于失败。上传链路确有问题时，可尝试 Apple 提供的 `--no-s3-acceleration`。保存返回的提交 ID，用 `notarytool info` 检查状态并通过 `notarytool log` 保存结果。**只有状态为 Accepted 才能标记公证通过。** 检查日志后，把票据装订到应用：
+
+```sh
+xcrun stapler staple "outputs/旅行素材管家.app"
+xcrun stapler validate "outputs/旅行素材管家.app"
+codesign --verify --deep --strict "outputs/旅行素材管家.app"
+spctl --assess --type execute --verbose=2 "outputs/旅行素材管家.app"
+```
+
+票据装订会修改应用包，所以必须在此之后重新生成最终 ZIP 与摘要；不能把待公证提交 ZIP 当成最终发行包，也不能向 ZIP 装订票据。验证签名后的 USB 离线 `selfcheck`、应用启动，以及浏览器实际下载后的首次打开；真机验收范围另行记录。安装与发布说明只声明实际完成的检查，不要求用户关闭系统安全保护。官方参考：[公证流程](https://developer.apple.com/documentation/security/customizing-the-notarization-workflow)、[Developer ID 证书](https://developer.apple.com/help/account/certificates/create-developer-id-certificates/)。
 
 ## 3. 冻结新标签与附件
 

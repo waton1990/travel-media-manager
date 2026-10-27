@@ -37,7 +37,7 @@ FORBIDDEN_PARTS = LOCAL_OUTPUT_DIRECTORIES | {"private", "真机导入测试", "
 FORBIDDEN_EXTENSIONS = {
     ".heic", ".heif", ".jpg", ".jpeg", ".dng", ".cr2", ".cr3", ".nef", ".arw",
     ".mov", ".mp4", ".m4v", ".m4a", ".mp3", ".wav", ".aac", ".lrf", ".aae",
-    ".sqlite", ".db", ".p12", ".p8", ".key", ".pem", ".mobileprovision",
+    ".sqlite", ".db", ".p12", ".p8", ".key", ".pem", ".cer", ".certsigningrequest", ".mobileprovision",
     ".provisionprofile", ".log", ".pyc", ".pyo", ".zip", ".dmg", ".pkg",
     ".gz", ".tgz", ".xz", ".bz2",
 }
@@ -77,7 +77,7 @@ def candidates(tracked):
                 dirs.remove(name)
             elif name in LOCAL_OUTPUT_DIRECTORIES:
                 dirs.remove(name)
-        result.extend((here / name).relative_to(ROOT) for name in files if name != ".DS_Store")
+        result.extend((here / name).relative_to(ROOT) for name in files if name not in {".DS_Store", ".git"})
     return result
 
 
