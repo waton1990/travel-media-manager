@@ -3,6 +3,27 @@ import Combine
 import Foundation
 import TravelArchiveCore
 
+/// Keeps an explicitly acquired folder scope alive for the current selection.
+/// Open-panel grants and the direct-download build may not require an explicit
+/// scope, so a false return is not itself a filesystem permission failure.
+final class SelectedFolderAccess {
+    private let url: URL
+    private let acquired: Bool
+    private let stopAccess: (URL) -> Void
+
+    init(url: URL,
+         startAccess: (URL) -> Bool = { $0.startAccessingSecurityScopedResource() },
+         stopAccess: @escaping (URL) -> Void = { $0.stopAccessingSecurityScopedResource() }) {
+        self.url = url
+        self.stopAccess = stopAccess
+        acquired = startAccess(url)
+    }
+
+    deinit {
+        if acquired { stopAccess(url) }
+    }
+}
+
 /// Display-only data. Device items never pretend to have a local file URL or inode.
 struct ArchivePreview {
     struct Issue: Identifiable {
@@ -115,6 +136,8 @@ final class AppModel: ObservableObject {
     private var interruptedReason: String?
     private var phonePlanDeviceID: String?
     private var observers = Set<AnyCancellable>()
+    private var sourceFolderAccess: SelectedFolderAccess?
+    private var destinationFolderAccess: SelectedFolderAccess?
 
     init() {
         phone.objectWillChange.sink { [weak self] in self?.objectWillChange.send() }.store(in: &observers)
@@ -216,7 +239,17 @@ final class AppModel: ObservableObject {
 
     func setFolder(_ url: URL, isSource: Bool) {
         guard !isBusy else { return }
-        if isSource { sourceURL = url } else { destinationURL = url }
+        // Acquire the new selection before releasing the old one. Keep both
+        // roots available through scan, preview, import, and result inspection.
+        // Selections are session-only; no persistent bookmarks are needed.
+        let access = SelectedFolderAccess(url: url)
+        if isSource {
+            sourceFolderAccess = access
+            sourceURL = url
+        } else {
+            destinationFolderAccess = access
+            destinationURL = url
+        }
         invalidatePreview()
     }
 

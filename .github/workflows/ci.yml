@@ -40,6 +40,8 @@ jobs:
         run: bash scripts/test.sh
       - name: USB helper tests without device access
         run: python3 -m unittest discover -s Tests/USBHelperTests -v
+      - name: Store packaging verification checks
+        run: python3 -m unittest discover -s Tests/StorePackagingTests -v
       - name: App model checks
         run: bash scripts/test-app-model.sh
       - name: City resolution checks without network access

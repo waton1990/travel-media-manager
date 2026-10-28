@@ -117,14 +117,23 @@ final class USBHelperClient: @unchecked Sendable {
         lock.lock()
         if let active = process, active.isRunning { lock.unlock(); return active }
         lock.unlock()
+        let helper = Bundle.main.bundleURL.appendingPathComponent("Contents/Helpers/USBHelper.app/Contents/MacOS/iphone-usb-helper")
         let bundled = Bundle.main.resourceURL?.appendingPathComponent("USBHelper/iphone-usb-helper")
         let development = URL(fileURLWithPath: FileManager.default.currentDirectoryPath)
             .appendingPathComponent("work/usb-helper/dist/iphone-usb-helper/iphone-usb-helper")
-        guard let executable = [bundled, development].compactMap({ $0 }).first(where: {
+        // Installed applications use their signed, bundled component only.
+        // The working-directory fallback is for an unbundled Swift build.
+        var candidates = [helper, bundled].compactMap { $0 }
+        if Bundle.main.bundleURL.pathExtension != "app" { candidates.append(development) }
+        guard let executable = candidates.first(where: {
             FileManager.default.isExecutableFile(atPath: $0.path)
         }) else { throw ArchiveError.invalid("应用缺少手机读取组件，请使用完整构建的应用。") }
         let active = Process()
         active.executableURL = executable
+        // Keep transient index snapshots within the parent's sandbox container.
+        var environment = ProcessInfo.processInfo.environment
+        environment["TMPDIR"] = FileManager.default.temporaryDirectory.path
+        active.environment = environment
         let stdinPipe = Pipe(), stdoutPipe = Pipe()
         active.standardInput = stdinPipe
         active.standardOutput = stdoutPipe
