@@ -154,6 +154,38 @@ struct ArchiveEngineTests {
         #expect(!(FileManager.default.fileExists(atPath: f.request.targetURL.path)))
     }
 
+    @Test func testCanonicalRootRejectsAncestorReplacedWithSymlink() throws {
+        let f = try fixture()
+        let ancestor = f.root.appendingPathComponent("ancestor", isDirectory: true)
+        let selected = ancestor.appendingPathComponent("selected", isDirectory: true)
+        try FileManager.default.createDirectory(at: selected, withIntermediateDirectories: true)
+        let canonical = try PathPolicy.canonicalDirectory(selected)
+        let moved = f.root.appendingPathComponent("moved-ancestor", isDirectory: true)
+        try FileManager.default.moveItem(at: ancestor, to: moved)
+        try FileManager.default.createSymbolicLink(at: ancestor, withDestinationURL: moved)
+        // The last component is still a real directory. Checking only that
+        // component with O_NOFOLLOW would incorrectly allow this traversal.
+        #expect(throws: (any Error).self) {
+            let fd = try PathPolicy.openDirectory(canonical)
+            close(fd)
+        }
+    }
+
+    @Test func testSelectedDirectoryReplacementInvalidatesHeldDescriptor() throws {
+        let f = try fixture()
+        let canonical = try PathPolicy.canonicalDirectory(f.destination)
+        let fd = try PathPolicy.openDirectory(canonical)
+        defer { close(fd) }
+        let moved = f.root.appendingPathComponent("previous-destination", isDirectory: true)
+        try FileManager.default.moveItem(at: f.destination, to: moved)
+        try FileManager.default.createDirectory(at: f.destination, withIntermediateDirectories: false)
+        #expect(throws: (any Error).self) {
+            try PathPolicy.confirmDirectory(f.destination, fd: fd)
+        }
+        #expect(try FileManager.default.contentsOfDirectory(atPath: moved.path).isEmpty)
+        #expect(try FileManager.default.contentsOfDirectory(atPath: f.destination.path).isEmpty)
+    }
+
     @Test func testCancelledCopyCleansPartialAndPreservesVerifiedFile() async throws {
         let f = try fixture()
         let first = try media(f.source.appendingPathComponent("first.MP4"))

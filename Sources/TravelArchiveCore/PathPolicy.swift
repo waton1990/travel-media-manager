@@ -14,20 +14,13 @@ enum PathPolicy {
     }
 
     static func openDirectory(_ url: URL) throws -> Int32 {
-        var fd = Darwin.open("/", O_RDONLY | O_DIRECTORY | O_NOFOLLOW | O_CLOEXEC)
-        guard fd >= 0 else { throw systemError("无法打开根目录") }
-        do {
-            for component in url.pathComponents where component != "/" {
-                let next = openat(fd, component, O_RDONLY | O_DIRECTORY | O_NOFOLLOW | O_CLOEXEC)
-                guard next >= 0 else { throw systemError("无法安全访问文件夹：\(component)") }
-                close(fd)
-                fd = next
-            }
-            return fd
-        } catch {
-            close(fd)
-            throw error
-        }
+        // Open only the selected canonical root: its sandbox grant does not
+        // grant directory-reading access to every ancestor. O_NOFOLLOW_ANY
+        // still rejects a symlink in any component, including one introduced
+        // after canonicalDirectory resolved the user's selection.
+        let fd = Darwin.open(url.path, O_RDONLY | O_DIRECTORY | O_NOFOLLOW_ANY | O_CLOEXEC)
+        guard fd >= 0 else { throw systemError("无法安全访问文件夹：\(url.lastPathComponent)") }
+        return fd
     }
 
     static func relativeComponents(file: URL, source: URL) throws -> [String] {

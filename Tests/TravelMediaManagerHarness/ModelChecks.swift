@@ -10,6 +10,7 @@ struct ModelChecks {
         let destination = FileManager.default.temporaryDirectory.appendingPathComponent("travel-model-check-\(UUID().uuidString)", isDirectory: true)
         try FileManager.default.createDirectory(at: destination, withIntermediateDirectories: true)
         defer { try? FileManager.default.removeItem(at: destination) }
+        try checkFolderScopeLifetime(destination: destination)
         let model = makeSyntheticModel(destination: destination)
         await Task.yield()
         try expect(model.livePhotoImportMode == .complete, "Live Photos default to complete originals")
@@ -18,6 +19,10 @@ struct ModelChecks {
         try expect(!model.canScan, "device discovery prevents concurrent scan")
         model.phone.setDiscoveryActive(false)
         model.scan()
+        model.setFolder(destination.appendingPathComponent("not-selected"), isSource: false)
+        model.setFolder(destination.appendingPathComponent("not-selected"), isSource: true)
+        try expect(model.destinationURL == destination && model.sourceURL == nil,
+                   "scanning retains selected folder access and rejects replacement")
         model.setLivePhotoImportMode(.stillOnly)
         try expect(model.livePhotoImportMode == .complete && !model.canChangeLivePhotoImportMode, "scanning freezes Live Photo mode")
         try await finish(model)
@@ -61,6 +66,9 @@ struct ModelChecks {
         try expect(model.canArchive && model.errorMessage == nil, "corrected destination restores valid plan")
         model.selectLocation(beijing, selected: true)
         model.archive()
+        model.setFolder(destination.appendingPathComponent("not-selected"), isSource: false)
+        try expect(model.destinationURL == destination,
+                   "archiving retains selected destination access and rejects replacement")
         model.setLivePhotoImportMode(.stillOnly)
         try expect(model.phase == .archiving && model.livePhotoImportMode == .complete && model.preview?.fileCount == 3 && model.preview?.totalBytes == 9_000_000,
                    "archiving freezes mode and preview for the captured complete plan")
@@ -136,6 +144,32 @@ struct ModelChecks {
                        "model uses bounded original checks and releases access after either outcome")
         }
         print("PASS: \(passedChecks) AppModel integration checks; local synthetic data only, no USB/network/media access.")
+    }
+    @MainActor
+    static func checkFolderScopeLifetime(destination: URL) throws {
+        var acquired = [URL]()
+        var released = [URL]()
+        var selection: SelectedFolderAccess? = SelectedFolderAccess(url: destination, startAccess: {
+            acquired.append($0)
+            return true
+        }, stopAccess: { released.append($0) })
+        try expect(selection != nil && acquired == [destination] && released.isEmpty,
+                   "selected folder keeps an acquired security scope alive")
+        let replacement = destination.appendingPathComponent("replacement")
+        selection = SelectedFolderAccess(url: replacement, startAccess: {
+            acquired.append($0)
+            return true
+        }, stopAccess: { released.append($0) })
+        try expect(acquired == [destination, replacement] && released == [destination],
+                   "replacing a folder releases its previous security scope")
+        selection = nil
+        try expect(released == [destination, replacement],
+                   "ending folder selection balances every successful scope acquisition")
+        selection = SelectedFolderAccess(url: destination, startAccess: { _ in false }, stopAccess: { released.append($0) })
+        try expect(selection != nil, "folder selection also works when no explicit scope is acquired")
+        selection = nil
+        try expect(released == [destination, replacement],
+                   "unacquired scopes never receive an unbalanced stop call")
     }
     @MainActor
     static func finish(_ model: AppModel) async throws {
